@@ -3,12 +3,15 @@ const { User, Thought, Reaction } = require('../models');
 const userControllers = require('./userController');
 
 const thoughtControllers = {
+
+    //get all the thoughts from mongodb
     getAllThought(req, res) {
         Thought.find()
             .then((response) => { res.status(200).json(response) })
             .catch((err) => { res.status(404).json(err) })
     },
 
+    //get a single thought by it´s id
     getThoughtById(req, res) {
         Thought.findOne({ _id: req.params.thoughtId })
             .then((response) => {
@@ -20,6 +23,7 @@ const thoughtControllers = {
             .catch((err) => { res.status(500).json(err) });
     },
 
+    //create a new thought and saving it to the user that made it
     createThought({ body }, res) {
         Thought.create(body)
             .then((response) => {
@@ -37,6 +41,7 @@ const thoughtControllers = {
             .catch((err) => res.status(500).json(err))
     },
 
+    //update a thought with new text
     updateThought(req, res) {
         Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
@@ -51,6 +56,7 @@ const thoughtControllers = {
             .catch((err) => { res.status(500).json(err) });
     },
 
+    //delte a thought document from mongo and removing it from the user array of thoughts
     deleteThought(req, res) {
         Thought.findOneAndDelete({ _id: req.params.thoughtId })
             .then((response) => {
@@ -73,6 +79,7 @@ const thoughtControllers = {
             .catch((err) => res.status(500).json(err));
     },
 
+    //add a new reaction to a thought
     addReaction(req, res) {
         Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
@@ -83,6 +90,7 @@ const thoughtControllers = {
             .catch((err) => { res.status(500).json(err) });
     },
 
+    //removing reaction from thought 
     removeReaction(req, res) {
         Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
