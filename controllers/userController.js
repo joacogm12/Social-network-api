@@ -27,12 +27,11 @@ const userControllers = {
     },
 
     updateUser(req, res) {
-        User.findOneAndUpdate
-            (
-                { _id: req.params.userId },
-                { $set: req.body },
-                { runValidators: true, new: true }
-            )
+        User.findOneAndUpdate(
+            { _id: req.params.userId },
+            { $set: req.body },
+            { runValidators: true, new: true }
+        )
             .then((response) => {
                 !response
                     ? res.status(400).json({ message: 'No user found with that ID' })
@@ -42,13 +41,19 @@ const userControllers = {
     },
 
     deleteUser(req, res) {
-        User.findByIdAndDelete({ _id: req.params.userId })
+        User.findOneAndDelete({ _id: req.params.userId })
             .then((response) => {
-                !response
-                    ? res.status(400).json({ message: 'No user found with that ID' })
-                    : Thought.deleteMany({ _id: { $in: response.thoughts } })
+                if (!response) {
+                    return res.status(400).json({ message: 'No user found with that ID' })
+                }
+                return Thought.deleteMany({ _id: { $in: response.thoughts } })
             })
-            .then(() => res.status(200).json({ message: 'user and associated thoughts deleted' }))
+            .then((response) => {
+                if (!response) {
+                    return res.status(400).json({ message: 'No user found with that ID' })
+                }
+                return res.status(200).json({ message: 'user and associated thouts deleted' })
+            })
             .catch((err) => res.status(500).json(err));
     },
 
